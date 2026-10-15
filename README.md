@@ -31,3 +31,51 @@ http://127.0.0.1:8000/docs
 - GET /courses?page=4&page_size=2 — an empty list [].
 
 Pagination uses Depends(pagination).
+
+## What changed in Lab 5
+
+CORS allows http://localhost:3000 so browser components can read
+responses from the backend at http://localhost:8000.
+All methods and headers are allowed.
+
+Python fields use snake_case. CamelModel converts JSON field names
+to camelCase, for example is_elective becomes isElective.
+validate_by_name=True keeps Python field names accepted.
+Query parameters still use is_elective and page_size.
+
+### New routes
+
+POST /courses/{course_id}/like increments likes and returns the course.
+Example response:
+```json
+{"id":"web-security","title":"Web Security Essentials","description":"JWT/OAuth2, XSS, CSRF, and SQL injection defense.","credits":4,"isElective":false,"likes":22}
+```
+
+POST /enrollments creates an enrollment and returns 201.
+Example request:
+```json
+{"courseId":"web-security","studentName":"Bekasyl"}
+```
+
+Example response:
+```json
+{"courseId":"web-security","studentName":"Bekasyl","id":1}
+```
+
+GET /enrollments returns the enrollment list:
+```json
+[{"courseId":"web-security","studentName":"Bekasyl","id":1}]
+```
+
+Names shorter than two characters are rejected with 422.
+Unknown course IDs return 404.
+
+Likes and enrollments are stored in memory and reset when
+the backend restarts.
+
+### Alternative startup command
+
+If Windows blocks fastapi.exe, run:
+```powershell
+python -m uvicorn main:app --reload
+```
